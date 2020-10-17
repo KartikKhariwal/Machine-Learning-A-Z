@@ -1,4 +1,4 @@
-# Decision Tree Regression
+# SVR
 
 # Importing the libraries
 import numpy as np
@@ -15,27 +15,35 @@ y = dataset.iloc[:, 2].values
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)"""
 
 # Feature Scaling
-"""from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler
 sc_X = StandardScaler()
-X_train = sc_X.fit_transform(X_train)
-X_test = sc_X.transform(X_test)
 sc_y = StandardScaler()
-y_train = sc_y.fit_transform(y_train.reshape(-1,1))"""
+X = sc_X.fit_transform(X)
+y = sc_y.fit_transform(y.reshape(-1,1))
 
-# Fitting Decision Tree Regression to the dataset
-from sklearn.tree import DecisionTreeRegressor
-regressor = DecisionTreeRegressor(random_state = 0)
+# Fitting SVR to the dataset
+from sklearn.svm import SVR
+regressor = SVR(kernel = 'rbf')
 regressor.fit(X, y)
 
 # Predicting a new result
 y_pred = regressor.predict([[6.5]])
+y_pred = sc_y.inverse_transform(y_pred)
 
-# Visualising the Decision Tree Regression results (higher resolution)
-X_grid = np.arange(min(X), max(X), 0.01)
+# Visualising the SVR results
+plt.scatter(X, y, color = 'red')
+plt.plot(X, regressor.predict(X), color = 'blue')
+plt.title('Truth or Bluff (SVR)')
+plt.xlabel('Position level')
+plt.ylabel('Salary')
+plt.show()
+
+# Visualising the SVR results (for higher resolution and smoother curve)
+X_grid = np.arange(min(X), max(X), 0.01) # choice of 0.01 instead of 0.1 step because the data is feature scaled
 X_grid = X_grid.reshape((len(X_grid), 1))
 plt.scatter(X, y, color = 'red')
 plt.plot(X_grid, regressor.predict(X_grid), color = 'blue')
-plt.title('Truth or Bluff (Decision Tree Regression)')
+plt.title('Truth or Bluff (SVR)')
 plt.xlabel('Position level')
 plt.ylabel('Salary')
 plt.show()
